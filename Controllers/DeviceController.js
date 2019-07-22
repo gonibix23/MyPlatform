@@ -15,10 +15,10 @@ module.exports.createDevice = function(req, res){
     });
     newDevice.save().then(function(device){
         if(device){
-            res.status(200).send('Ha funcionado');
+            res.status(200).send('Device created');
         }
         else{
-            res.status(400).send('Ha fallado');
+            res.status(400).send('Device creation failed');
         }
     });
 };
@@ -39,3 +39,15 @@ module.exports.getDevicesById = function(req, res){
         }
     });
 };
+
+module.exports.updateDevice = function(req, res){
+    const deviceId = req.body.deviceId;
+    const newDeviceStatus = req.body.status;
+    DeviceModel.findByIdAndUpdate(deviceId, {status:newDeviceStatus}).then(function(device){
+        if(device){
+            res.status(200).send("Device Updated Successfully");
+        }else{
+            res.status(404).send("No device found with this id");
+        }
+    });
+}

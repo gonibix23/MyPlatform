@@ -60,14 +60,47 @@ module.exports.updateDevice = function(req, res){
 
 module.exports.sendEmail = function(req, res){
     const deviceId = req.body.deviceId;
-    const date = new Date();
+    DeviceModel.findById(deviceId).then(function(device){
+        const date = new Date();
     const formattedDate = date.toISOString();
     const msg = {
         to:"gonibix23@gmail.com",
         from: "HelloImAnEmail@happymail.com",
-        subject: `Alert from device: ${deviceId} || Date: ${formattedDate}`,
+        subject: `${device.name} Triggered`,
         text: `Alert from device: ${deviceId} || Date: ${formattedDate}`,
-        html: `<h1>Alert from device: ${deviceId} || Date: ${formattedDate}</h1>`,
+        html: 
+            `<html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            </head>
+            <style>
+                    .card {
+                      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+                      transition: 0.3s;
+                      width: 40%;
+                    }
+                    
+                    .card:hover {
+                      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+                    }
+                    
+                    .container {
+                      padding: 2px 16px;
+                    }
+            </style>
+            <body>
+                <form align="center">
+                    <h2><b>Your device has been triggered</b></h2>
+                    <h2><b>Name: ${device.name}</b></h2>
+                    <h2><b>ID: ${deviceId}</b></h2>  
+                    <div class="card">
+                        <img src="https://media.alienwarearena.com/media/comboburst-1.png" alt="Sensor" style="width:300px" style="heigth:600px">
+                    </div>
+                </form>
+            </body>
+        </html>`
     };
 
     sgMail.send(msg).then(function(message){
@@ -76,4 +109,6 @@ module.exports.sendEmail = function(req, res){
             res.status(200).send("Email sent");
         }
     });
+    })
+    
 };
